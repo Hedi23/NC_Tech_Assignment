@@ -13,12 +13,15 @@ phases:
       - ls
       - cd terra 
       - ls
-      - TF_LOG=DEBUG terraform init
+      - terraform init -upgrade
+      - terraform workspace new $WORKSPACE
+      - terraform workspace select $WORKSPACE
+
 
   build:
     commands:
-      - terraform apply -lock=false -var-file="../environment/intput_var.auto.tfvars" -auto-approve
+      - terraform $TF_COMMAND -var-file="../environment/intput_var.auto.tfvars" $AUTO
 
   post_build:
     commands:
-      - echo "terraform apply completed on ´date´"
+      - echo "terraform $TF_COMMAND completed on ´date´"
