@@ -16,6 +16,9 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     # Install Nginx
     apt-get install -y nginx 
 
+    # Increase the server_names_hash_bucket_size to 128 in order to accept long domain names
+    echo "server_names_hash_bucket_size 128;" | sudo tee /etc/nginx/conf.d/server_names_hash_bucket_size.conf
+
     # Add the NodeSource APT repository for Node 12
     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash
 
@@ -32,8 +35,10 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
     # Install Ghost, cannot be run via root (user data default)
     sudo -u ubuntu ghost install \
-        --url       "${URL}" \
-        --admin-url "${ADMIN_URL}" \
+        # --url       "${URL}" \
+        # --admin-url "${ADMIN_URL}" \
+        --url       "${LB_HOSTNAME}" \
+        --admin-url "${LB_HOSTNAME}" \
         --db        "mysql" \
         --dbhost    "${DB_HOSTNAME}" \
         --dbuser    "${DB_USERNAME}" \
