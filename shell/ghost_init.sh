@@ -3,11 +3,9 @@ DB_NAME=${DB_NAME}
 DB_HOSTNAME=${DB_HOSTNAME}
 DB_USERNAME=${DB_USERNAME}
 DB_PASSWORD=${DB_PASSWORD}
-WP_ADMIN=${WP_ADMIN}
-WP_PASSWORD=${WP_PASSWORD}
-WP_EMAIL=${WP_EMAIL}
+URL=${URL}
+ADMIN_URL=${ADMIN_URL}
 LB_HOSTNAME=${LB_HOSTNAME}
-EFS_ID=${EFS_ID}
 
 # Send the output to the console logs and at /var/log/user-data.log
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
@@ -34,8 +32,8 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
     # Install Ghost, cannot be run via root (user data default)
     sudo -u ubuntu ghost install \
-        --url       "${url}" \
-        --admin-url "${admin_url}" \
+        --url       "${URL}" \
+        --admin-url "${ADMIN_URL}" \
         --db        "mysql" \
         --dbhost    "${DB_HOSTNAME}" \
         --dbuser    "${DB_USERNAME}" \
