@@ -48,7 +48,7 @@ resource "aws_alb_target_group" "group" {
     timeout = 50
     interval = 60
     port = 80
-    path = "/wp-login.php"
+    path = "/"
     matcher = "200" # has to be HTTP 200 or fails
   }
    tags = {
