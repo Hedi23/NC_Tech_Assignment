@@ -33,7 +33,7 @@ variable "efs_id" {
 
 variable "website_url" {
   type    = string
-  default = "http://droneshuttles-ghost.tk"
+  default = "http://droneshuttles-ghost.tk/"
 }
 
 variable "website_admin_url" {

@@ -75,6 +75,9 @@ resource "aws_launch_template" "launch_template" {
   instance_initiated_shutdown_behavior = "terminate"
   vpc_security_group_ids = var.appsecurtiygroup
   user_data = base64encode(data.template_file.userdata.rendered)
+  iam_instance_profile {
+      name = aws_iam_instance_profile.ec2_profile.name
+    }
    tags = {
     Name = "${terraform.workspace}-LaunchTemplate"
   }
@@ -98,7 +101,7 @@ resource "aws_autoscaling_group" "wp_autoscaling_group" {
 
   min_size             = 1
   desired_capacity     = 1
-  max_size             = 4
+  max_size             = 1
   
   health_check_type    = "ELB"
   launch_template {
@@ -127,4 +130,37 @@ resource "aws_autoscaling_group" "wp_autoscaling_group" {
   }
     target_group_arns = [aws_alb_target_group.group.arn]
 
+}
+
+#IAM instance profile
+resource "aws_iam_instance_profile" "ec2_profile" {
+  name = "ec2-profile-ghost"
+  role = aws_iam_role.ec2_role.name
+}
+#role
+resource "aws_iam_role" "ec2_role" {
+  name = "ec2-role-ghost"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
+}
+
+# Policy needed
+resource "aws_iam_role_policy_attachment" "test-attach" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:amazon:iam::amazon:policy/AmazonSSMManagedInstanceCore"
 }
