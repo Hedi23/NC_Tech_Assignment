@@ -32,20 +32,30 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
     # Give permission to ubuntu user, create directory 
     sudo chown -R ubuntu:ubuntu /var/www/
     sudo -u ubuntu mkdir -p /var/www/ghost && cd /var/www/ghost
-    sudo chmod 775/var/www/ghost
     
+
+    sudo apt-get purge mysql-server
+    sudo apt-get autoremove
+    sudo apt-get autoclean
+
+    sudo apt-get update
+    sudo apt-get install mysql-server -y
+
+    sudo chown -R ubuntu:ubuntu /var/www/ghost
+    sudo chmod 775 /var/www/ghost
+
     sudo chown -R ubuntu:ubuntu /home/ssm-user/
+    sudo chown -R ubuntu:ubuntu /var/
 
     # Install Ghost, cannot be run via root (user data default)
     sudo -u ubuntu ghost install \
-        # --url       "${URL}" \
-        # --admin-url "${ADMIN_URL}" \
         --url       "http://${LB_HOSTNAME}" \
-        --admin-url "http://${LB_HOSTNAME}" \
+        --admin-url "http://admin.${LB_HOSTNAME}" \
         --db        "mysql" \
         --dbhost    "${DB_HOSTNAME}" \
         --dbuser    "${DB_USERNAME}" \
         --dbpass    "${DB_PASSWORD}" \
         --dbname    "${DB_NAME}" \
         --process systemd \
+        --process NGINX \
         --no-prompt
