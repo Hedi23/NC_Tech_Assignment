@@ -31,8 +31,9 @@ exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
     # Give permission to ubuntu user, create directory 
     sudo chown -R ubuntu:ubuntu /var/www/
-    sudo -u ubuntu mkdir -p /var/www/blog && cd /var/www/blog
-
+    sudo -u ubuntu mkdir -p /var/www/ghost && cd /var/www/ghost
+    sudo chmod 775/var/www/ghost
+    
     sudo chown -R ubuntu:ubuntu /home/ssm-user/
 
     # Install Ghost, cannot be run via root (user data default)
